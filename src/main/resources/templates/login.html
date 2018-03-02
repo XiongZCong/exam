@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>登录</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <!-- jquery -->
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+    <!-- jquery-validator -->
+    <script type="text/javascript" th:src="@{/jquery-validation/jquery.validate.min.js}"></script>
+    <script type="text/javascript" th:src="@{/jquery-validation/localization/messages_zh.min.js}"></script>
+    <!-- layer -->
+    <script type="text/javascript" th:src="@{/layer/layer.js}"></script>
+    <!-- md5.js -->
+    <script type="text/javascript" th:src="@{/js/md5.min.js}"></script>
+    <!-- common.js -->
+    <script type="text/javascript" th:src="@{/js/common.js}"></script>
+</head>
+<body>
+<input type="text" id="userId"/>
+<input type="text" id="username"/>
+<input type="text" id="password"/>
+<input type="button" id="login"/>
+</body>
+<script>
+    $(function () {
+        $("#login").on("click", function () {
+            var userId = $("#userId").val();
+            var username = $("#username").val();
+            var password = $("#password").val();
+            var data = {userId: userId, username: username, password: password};
+            console.log(data);
+            $.ajax({
+                url: "/xzc/user/login",
+                type: "POST",
+                data: data,
+                success: function (data) {
+
+                },
+                error: function () {
+
+                }
+
+            })
+        })
+    })
+</script>
+</html>
