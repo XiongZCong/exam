@@ -7,20 +7,30 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 @Service
-public class RedisService {
+public class RedisUtil {
 
     @Autowired
     JedisPool jedisPool;
 
+    private String className = "";
+
+    public static String Field_id = "id";
+    public static String Field_name = "name";
+
+    public String getPrefix(String className, String field, String key) {
+        return className + "_" + field + "_" + key;
+    }
+
     /**
-     * 获取当个对象
+     * 获取单个对象
      */
-    public <T> T get(KeyPrefix prefix, String key, Class<T> clazz) {
+    public <T> T get(Class<T> clazz, String field, String key) {
         Jedis jedis = null;
+        className = clazz.getSimpleName();
         try {
             jedis = jedisPool.getResource();
             //生成真正的key
-            String realKey = prefix.getPrefix() + key;
+            String realKey = getPrefix(className, field, key);
             String str = jedis.get(realKey);
             T t = SBUtil.stringToBean(str, clazz);
             return t;
@@ -32,21 +42,24 @@ public class RedisService {
     /**
      * 设置对象
      */
-    public <T> boolean set(KeyPrefix prefix, String key, T value) {
+    public <T> boolean set(T obj, String field, String key) {
+        return set(obj, field, key, 0);
+    }
+
+    public <T> boolean set(T obj, String field, String key, int expire) {
         Jedis jedis = null;
+        className = obj.getClass().getSimpleName();
         try {
             jedis = jedisPool.getResource();
-            String str = SBUtil.beanToString(value);
+            String str = SBUtil.beanToString(obj);
             if (str == null || str.length() <= 0) {
                 return false;
             }
-            //生成真正的key
-            String realKey = prefix.getPrefix() + key;
-            int seconds = prefix.expire();
-            if (seconds <= 0) {
+            String realKey = getPrefix(className, field, key);
+            if (expire <= 0) {
                 jedis.set(realKey, str);
             } else {
-                jedis.setex(realKey, seconds, str);
+                jedis.setex(realKey, expire, str);
             }
             return true;
         } finally {
@@ -57,12 +70,12 @@ public class RedisService {
     /**
      * 判断key是否存在
      */
-    public <T> boolean exists(KeyPrefix prefix, String key) {
+    public <T> boolean exists(Class<T> clazz, String field, String key) {
         Jedis jedis = null;
+        className = clazz.getSimpleName();
         try {
             jedis = jedisPool.getResource();
-            //生成真正的key
-            String realKey = prefix.getPrefix() + key;
+            String realKey = getPrefix(className, field, key);
             return jedis.exists(realKey);
         } finally {
             returnToPool(jedis);
@@ -72,12 +85,12 @@ public class RedisService {
     /**
      * 增加值
      */
-    public <T> Long incr(KeyPrefix prefix, String key) {
+    public <T> Long incr(Class<T> clazz, String field, String key) {
         Jedis jedis = null;
+        className = clazz.getSimpleName();
         try {
             jedis = jedisPool.getResource();
-            //生成真正的key
-            String realKey = prefix.getPrefix() + key;
+            String realKey = getPrefix(className, field, key);
             return jedis.incr(realKey);
         } finally {
             returnToPool(jedis);
@@ -87,12 +100,12 @@ public class RedisService {
     /**
      * 减少值
      */
-    public <T> Long decr(KeyPrefix prefix, String key) {
+    public <T> Long decr(Class<T> clazz, String field, String key) {
         Jedis jedis = null;
+        className = clazz.getSimpleName();
         try {
             jedis = jedisPool.getResource();
-            //生成真正的key
-            String realKey = prefix.getPrefix() + key;
+            String realKey = getPrefix(className, field, key);
             return jedis.decr(realKey);
         } finally {
             returnToPool(jedis);

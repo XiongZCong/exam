@@ -37,7 +37,7 @@ public class UserService {
     private void addCookie(HttpServletResponse response, String token, User user) {
         redisService.set(MiaoshaUserKey.token, token, user);
         Cookie cookie = new Cookie(COOKIE_NAME_TOKEN, token);
-        cookie.setMaxAge(MiaoshaUserKey.token.expireSeconds());
+        cookie.setMaxAge(MiaoshaUserKey.token.expire());
         cookie.setPath("/");
         response.addCookie(cookie);
     }

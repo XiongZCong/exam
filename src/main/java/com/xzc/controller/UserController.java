@@ -1,7 +1,9 @@
 package com.xzc.controller;
 
 import com.xzc.bean.User;
+import com.xzc.redis.KeyPrefix;
 import com.xzc.redis.RedisService;
+import com.xzc.redis.RedisUtil;
 import com.xzc.redis.UserKey;
 import com.xzc.result.Result;
 import com.xzc.service.UserService;
@@ -20,6 +22,8 @@ public class UserController {
     public UserService userService;
     @Autowired
     public RedisService redisService;
+    @Autowired
+    public RedisUtil redisUtil;
 
     @RequestMapping("/thymeleaf")
     public String thymeleaf(Model model) {
@@ -33,15 +37,8 @@ public class UserController {
         return "login";
     }
 
-    /*@ResponseBody
-    @RequestMapping("/login")
-    public Result login(User user) {
-        System.out.println(user.toString());
-        userService.login(user);
-        return Result.success(user);
-    }*/
     @RequestMapping("login")
-    public String login(HttpServletResponse response,User user) {
+    public String login(HttpServletResponse response, User user) {
         System.out.println(user.toString());
         //userService.getByToken(response)
         return "hello";
@@ -55,6 +52,14 @@ public class UserController {
         user.setUsername("456");
         user.setPassword("123456");
         redisService.set(UserKey.getById, "123", user);
+        redisService.set(UserKey.getById, "121", user);
+        //redisService.decr(UserKey.getById, "121");
+        redisUtil.set(user, "id", "333", 60);
+        System.out.println(redisUtil.get(User.class, RedisUtil.Field_id, "333"));
+        redisService.set(new KeyPrefix(60, "123") {
+        }, "11", user);
+        //redisUtil.decr(User.class, RedisUtil.Field_id, "333");
+        System.out.println(redisService.get(UserKey.getById, "111", User.class).toString());
         return Result.success(user);
     }
 

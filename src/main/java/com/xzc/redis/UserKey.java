@@ -1,6 +1,6 @@
 package com.xzc.redis;
 
-public class UserKey extends BasePrefix {
+public class UserKey extends KeyPrefix {
 
     private UserKey(String prefix) {
         super(prefix);
