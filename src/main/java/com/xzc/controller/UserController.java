@@ -2,10 +2,10 @@ package com.xzc.controller;
 
 import com.xzc.bean.User;
 import com.xzc.redis.RedisService;
-import com.xzc.redis.RedisUtil;
 import com.xzc.redis.UserKey;
 import com.xzc.result.Result;
 import com.xzc.service.UserService;
+import com.xzc.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +22,7 @@ public class UserController {
     @Autowired
     public RedisService redisService;
     @Autowired
-    public RedisUtil redisUtil;
+    public com.xzc.redis.RedisUtil redisUtil;
 
     @RequestMapping("/thymeleaf")
     public String thymeleaf(Model model) {
@@ -45,17 +45,20 @@ public class UserController {
 
     @ResponseBody
     @RequestMapping("/redis")
-    public Result redis(Model model) {
+    public Result redis() {
         User user = new User();
         user.setUserId(123L);
         user.setUsername("456");
         user.setPassword("123456");
         redisService.set(UserKey.getById, "111", user);
-        redisService.set(UserKey.getById, "222", user);
-        redisUtil.set(user, "id", "333");
-        redisUtil.set(user, "id", "444", 60);
-        System.out.println(redisUtil.get(User.class, RedisUtil.Field_id, "333"));
+        redisService.set(UserKey.getByName, "222", user);
+        redisUtil.set(user, RedisUtil.Field_ID, "333");
+        redisUtil.set(user, RedisUtil.Field_NAME, "444", 60);
+        RedisUtil.set(user, RedisUtil.Field_ID, "555", 60);
+        RedisUtil.set(user, RedisUtil.Field_NAME, "666", 60);
+        System.out.println(redisUtil.get(User.class, RedisUtil.Field_ID, "333"));
         System.out.println(redisService.get(UserKey.getById, "111", User.class).toString());
+        System.out.println(RedisUtil.get(User.class, RedisUtil.Field_ID, "555").toString());
         return Result.success(user);
     }
 
