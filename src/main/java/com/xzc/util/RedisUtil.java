@@ -1,5 +1,6 @@
 package com.xzc.util;
 
+import com.alibaba.fastjson.JSON;
 import redis.clients.jedis.Jedis;
 
 public class RedisUtil {
@@ -20,7 +21,8 @@ public class RedisUtil {
         className = clazz.getSimpleName();
         String realKey = getPrefix(className, field, key);
         String str = jedis.get(realKey);
-        T t = SBUtil.stringToBean(str, clazz);
+        System.out.println(str);
+        T t = JSON.parseObject(str, clazz);
         jedis.close();
         return t;
     }
@@ -35,7 +37,7 @@ public class RedisUtil {
     public static <T> boolean set(T obj, String field, String key, int expire) {
         Jedis jedis = RedisBase.getJedis();
         className = obj.getClass().getSimpleName();
-        String str = SBUtil.beanToString(obj);
+        String str = JSON.toJSONString(obj);
         if (str == null || str.length() <= 0) {
             jedis.close();
             return false;

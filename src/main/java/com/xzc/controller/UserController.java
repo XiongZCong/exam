@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("user")
@@ -50,15 +52,23 @@ public class UserController {
         user.setUserId(123L);
         user.setUsername("456");
         user.setPassword("123456");
+        User user1 = new User(14L, "25", "36");
+        User user2 = new User(147L, "258", "369");
+        List<User> list = new ArrayList<>();
+        list.add(user);
+        list.add(user1);
+        list.add(user2);
         redisService.set(UserKey.getById, "111", user);
         redisService.set(UserKey.getByName, "222", user);
         redisUtil.set(user, RedisUtil.Field_ID, "333");
         redisUtil.set(user, RedisUtil.Field_NAME, "444", 60);
         RedisUtil.set(user, RedisUtil.Field_ID, "555", 60);
         RedisUtil.set(user, RedisUtil.Field_NAME, "666", 60);
+        RedisUtil.set(list, RedisUtil.Field_NAME, "777", 60);
         System.out.println(redisUtil.get(User.class, RedisUtil.Field_ID, "333"));
         System.out.println(redisService.get(UserKey.getById, "111", User.class).toString());
         System.out.println(RedisUtil.get(User.class, RedisUtil.Field_ID, "555").toString());
+        System.out.println(RedisUtil.get(ArrayList.class, RedisUtil.Field_NAME, "777").toString());
         return Result.success(user);
     }
 
