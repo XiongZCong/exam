@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Controller
 @RequestMapping("user")
@@ -60,23 +58,14 @@ public class UserController {
         list.add(user);
         list.add(user1);
         list.add(user2);
-        Set<User> set = new HashSet<>();
-        set.add(user);
-        set.add(user1);
-        set.add(user2);
         redisService.set(UserKey.getById, "111", user);
-        redisService.set(UserKey.getByName, "222", user);
-        redisUtil.set(user, RedisUtil.Field_ID, "333");
-        redisUtil.set(user, RedisUtil.Field_NAME, "444", 60);
+        redisUtil.set(user, RedisUtil.Field_ID, "333", 60);
         RedisUtil.set(user, RedisUtil.Field_ID, "555", 60);
-        RedisUtil.set(user, RedisUtil.Field_NAME, "666", 60);
-        RedisUtil.set(list, RedisUtil.Field_NAME, "777", 60);
-        RedisUtil.set(set, RedisUtil.Field_NAME, "888", 60);
-        System.out.println(redisUtil.get(User.class, RedisUtil.Field_ID, "333"));
+        RedisUtil.set(list, RedisUtil.Field_ID, "777", 60);
         System.out.println(redisService.get(UserKey.getById, "111", User.class).toString());
-        System.out.println(RedisUtil.get(User.class, RedisUtil.Field_ID, "555").toString());
-        System.out.println(RedisUtil.get(ArrayList.class, RedisUtil.Field_NAME, "777").toString());
-        System.out.println(RedisUtil.get(HashSet.class, RedisUtil.Field_NAME, "888").toString());
+        System.out.println(redisUtil.get(User.class, RedisUtil.Field_ID, "333"));
+        System.out.println(RedisUtil.get(User.class, RedisUtil.Field_ID, "555").getUsername());
+        System.out.println(((User) RedisUtil.getList(RedisUtil.Type_ArrayList, RedisUtil.Field_ID, "777", User.class).get(0)).getUsername());
         return Result.success(user);
     }
 

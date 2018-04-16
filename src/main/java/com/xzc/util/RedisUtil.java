@@ -1,16 +1,20 @@
 package com.xzc.util;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import redis.clients.jedis.Jedis;
+
+import java.util.List;
 
 public class RedisUtil {
 
     private static String className = "";
     public static final String Field_ID = "id";
     public static final String Field_NAME = "name";
+    public static final String Type_ArrayList = "ArrayList";
 
     private static String getPrefix(String className, String field, String key) {
-        return className.toLowerCase() + ":" + field + ":" + key;
+        return className + ":" + field + ":" + key;
     }
 
     /**
@@ -21,10 +25,18 @@ public class RedisUtil {
         className = clazz.getSimpleName();
         String realKey = getPrefix(className, field, key);
         String str = jedis.get(realKey);
-        System.out.println(str);
         T t = JSON.parseObject(str, clazz);
         jedis.close();
         return t;
+    }
+
+    public static <T> List getList(String type, String field, String key, Class<T> clazz) {
+        Jedis jedis = RedisBase.getJedis();
+        String realKey = getPrefix(type, field, key);
+        String str = jedis.get(realKey);
+        List list = JSONArray.parseArray(str, clazz);
+        jedis.close();
+        return list;
     }
 
     /**
