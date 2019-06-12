@@ -1,0 +1,53 @@
+server:
+  port: 9001
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  #邮箱服务器设置
+  mail:
+    host: smtp.qq.com
+    port: 587
+    username: xiong.zhicong@qq.com
+    password: iroucebytxbxdhdd
+    properties:
+      mail:
+        smtp:
+          auth: true
+        starttls:
+          enable: true
+          required: true
+  #MySQL数据库设置
+  datasource:
+    name: mysql
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/javaee?characterEncoding=UTF-8&useSSL=true
+    username: root
+    password: root
+# druid数据源管理
+    type: com.alibaba.druid.pool.DruidDataSource
+# mybatis设置
+mybatis:
+  type-aliases-package: com.xzc.model
+  mapper-locations: classpath:mapper/*.xml
+#redis数据库设置
+redis:
+  host: 127.0.0.1
+  port: 6379
+  timeout: 3
+  password: 123456
+  poolMaxTotal: 10
+  poolMaxIdle: 10
+  poolMaxWait: 3
+#logger日志设置
+logging:
+  file: logs/info.log
+  level:
+    org.springframework.web: info
+    com.xzc.mapper : debug
+#七牛云配置
+qiniu:
+  accessKey: -5yTjjznkDUy7HkOXft0tVuQVrFC5sWQb8VofOoR
+  secretKey: z7Hs5tMBKqQ-8C5JzmAFtgycxUGchz3h1RPSOnSH
+  bucket: xzcxzc
+  path: http://p9y3owzjz.bkt.clouddn.com

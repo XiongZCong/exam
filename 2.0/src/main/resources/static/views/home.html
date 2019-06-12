@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <script src="../assets/js/jquery.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $("#logout").on("click", function () {
+                $.ajax({
+                    url: "/user/logout",
+                    type: "post",
+                    success: function (data) {
+                        window.location.href = data.data;
+                    }
+                });
+            });
+        })
+    </script>
+</head>
+<body>
+系统首页
+<a href="javascript:void(0)" id="logout">安全退出</a>
+<br>
+</body>
+</html>

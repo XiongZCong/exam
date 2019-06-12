@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.xzc.mapper.PermissionMapper">
+
+    <resultMap id="RoleMap" type="com.xzc.model.Role">
+        <id property="roleId" column="roleId"/>
+        <result property="roleName" column="roleName"/>
+        <result property="operation" column="operation"/>
+        <result property="createTime" column="createTime"/>
+        <result property="note" column="note"/>
+        <collection property="permissions" ofType="com.xzc.model.Permission">
+            <id property="permissionId" column="permissionId"/>
+            <result property="permissionName" column="permissionName"/>
+            <result property="resource" column="resource"/>
+            <result property="access" column="access"/>
+            <result property="operation" column="operation"/>
+            <result property="createTime" column="createTime"/>
+            <result property="note" column="note"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectPermissionsByRoleId" parameterType="long" resultMap="RoleMap">
+      SELECT p.*,r.*
+        FROM t_permission p
+          INNER JOIN role_permission rp ON rp.permissionId = p.permissionId
+          INNER JOIN t_role r ON rp.roleId = r.roleId
+        WHERE r.roleId = #{roleId}
+    </select>
+
+    <insert id="insertRole" parameterType="Role" useGeneratedKeys="true" keyProperty="roleId">
+        INSERT INTO t_role(roleName,operation,createTime,note)
+        VALUES(#{roleName},#{operation},#{createTime},#{note})
+     </insert>
+
+    <update id="updateRole" parameterType="Role">
+        UPDATE t_role
+        SET (roleName=#{roleName},note=#{note})
+        WHERE roleId=#{roleId}
+    </update>
+    <update id="updatePermission" parameterType="Permission">
+        UPDATE t_role
+        SET (permissionName=#{permissionName},resource=#{resource},access=#{access},note=#{note})
+        WHERE permissionId=#{permissionId}
+    </update>
+
+    <insert id="insertPermission" parameterType="Permission" useGeneratedKeys="true" keyProperty="permissionId">
+        INSERT INTO t_permission(permissionName,resource,access,operation,createTime,note)
+        VALUES(#{permissionName},#{resource},#{access},#{operation},#{createTime},#{note})
+    </insert>
+
+</mapper>

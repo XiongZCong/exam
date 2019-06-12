@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.xzc.mapper.UserMapper">
+
+    <resultMap id="userMap" type="com.xzc.model.User">
+        <id property="userId" column="userId"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="headPic" column="headPic"/>
+        <result property="createTime" column="createTime"/>
+        <result property="state" column="state"/>
+        <result property="note" column="note"/>
+        <collection property="roles" ofType="com.xzc.model.Role">
+            <id property="roleId" column="roleId"/>
+            <result property="roleName" column="roleName"/>
+            <result property="createTime" column="createTime"/>
+            <result property="operation" column="operation"/>
+            <result property="note" column="rnote"/>
+            <collection property="permissions" ofType="com.xzc.model.Permission">
+                <id property="permissionId" column="permissionId"/>
+                <result property="permissionName" column="permissionName"/>
+                <result property="resource" column="resource"/>
+                <result property="access" column="access"/>
+                <result property="createTime" column="createTime"/>
+                <result property="operation" column="operation"/>
+                <result property="note" column="pnote"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="selectUserByName" parameterType="string" resultMap="userMap">
+      SELECT u.*, r.roleId,r.roleName,r.createTime,r.operation,r.note 'rnote',
+        p.permissionId,p.permissionName,p.resource,p.access,p.createTime,p.operation,p.note 'pnote'
+      FROM t_user u
+        INNER JOIN user_role ur on ur.userId = u.userId
+        INNER JOIN t_role r on r.roleId = ur.roleId
+        INNER JOIN role_permission rp on rp.roleId = r.roleId
+        INNER JOIN t_permission p on rp.permissionId = p.permissionId
+      WHERE u.username = #{username}
+    </select>
+
+    <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO t_user(username,password,state)
+        VALUES (#{username},#{password},#{state})
+    </insert>
+</mapper>
